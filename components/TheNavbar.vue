@@ -1,7 +1,7 @@
 <script setup>
-const { siteName } = useAppConfig();
-const deskree = useDeskree();
-const loggedInUser = computed(() => deskree.loggedInUser.value);
+const { siteName } = useConfig();
+const supabase = useSupabaseAuth();
+const loggedInUser = computed(() => supabase.loggedInUser.value);
 </script>
 <template>
   <div class="navbar bg-base-100 shadow-md">

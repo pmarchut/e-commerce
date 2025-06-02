@@ -11,7 +11,7 @@ This repo includes:
 
 During the event we'll use several 3rd party SaaS platforms to provide app funcationality like data storage, payment processing, etc. Those services include:
 
-- Deskree
+- Deskree (replaced with Supabase, because Deskree closed Backend as a Service)
 - Contentful CMS
 - Stripe
 - and Big Commerce

@@ -1,7 +1,7 @@
 <script setup>
 const alerts = useAlertsStore();
 
-const { auth } = useDeskree();
+const { auth } = useSupabaseAuth();
 definePageMeta({
   layout: "form-focus",
 });

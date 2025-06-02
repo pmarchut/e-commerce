@@ -1,13 +1,10 @@
-import { defineNuxtConfig } from "nuxt";
+import { defineNuxtConfig } from 'nuxt/config'
 
 requireEnvVars();
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   css: ["@/assets/main.css", "@formkit/themes/genesis"],
-  autoImports: {
-    dirs: ["stores"],
-  },
   modules: [
     "@formkit/nuxt",
     [
@@ -16,6 +13,7 @@ export default defineNuxtConfig({
         autoImports: ["defineStore", "acceptHMRUpdate"],
       },
     ],
+    "@nuxtjs/supabase",
   ],
   runtimeConfig: {
     stripeSecret: process.env.STRIPE_SECRET,
@@ -23,30 +21,34 @@ export default defineNuxtConfig({
       contentfulSpace: "v7fvzlkum53d",
       contentfulPublicAccessToken:
         "dG3pVWxjHUEzLX0Xga4muaYMPWj0wEQ74RVKzZbMRX8",
-      deskreeBaseUrl: process.env.NUXT_DESKREE_BASE_URL,
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseAnonKey: process.env.SUPABASE_KEY,
     },
+  },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
+  supabase: {
+    redirect: false
   },
   build: {
     transpile:
       process.env.npm_lifecycle_script === "nuxt generate"
         ? ["contentful"]
         : [],
-    postcss: {
-      postcssOptions: {
-        plugins: {
-          tailwindcss: {},
-          autoprefixer: {},
-        },
-      },
-    },
   },
 });
 
 function requireEnvVars() {
-  const map = {
-    "Deskree Project URL": process.env.NUXT_DESKREE_BASE_URL,
+  const map: Record<string, string | undefined> = {
+    "Supabase Project URL": process.env.SUPABASE_URL,
+    "Supabase Project API Key": process.env.SUPABASE_KEY,
     "Stripe secret token": process.env.STRIPE_SECRET,
   };
+
   let ready = true;
   for (const label in map) {
     if (!map[label]) {

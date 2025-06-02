@@ -5,7 +5,7 @@ definePageMeta({
   layout: "form-focus",
 });
 
-const deskree = useDeskree();
+const supabase = useSupabaseAuth();
 
 const form = reactive({
   email: "",
@@ -17,7 +17,7 @@ const loading = ref(false);
 async function handleRegistration(e) {
   loading.value = true;
   try {
-    await deskree.auth.signUp(form);
+    await supabase.auth.signUp(form);
     useRouter().push("/");
   } catch (err) {
     alerts.error("Error registering, please contact support");

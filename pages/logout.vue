@@ -1,6 +1,5 @@
 <script setup>
-const { auth } = useDeskree();
-const router = useRouter();
+const { auth } = useSupabaseAuth();
 await auth.logout();
 onMounted(() => {
   window.location = "/login";

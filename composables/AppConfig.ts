@@ -1,4 +1,4 @@
-export const useAppConfig = () => {
+export const useConfig = () => {
   return {
     siteName: "Awesome Sauce",
   };
