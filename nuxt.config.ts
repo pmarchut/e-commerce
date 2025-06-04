@@ -14,6 +14,7 @@ export default defineNuxtConfig({
       },
     ],
     "@nuxtjs/supabase",
+    '@nuxt/test-utils/module'
   ],
   runtimeConfig: {
     stripeSecret: process.env.STRIPE_SECRET,
