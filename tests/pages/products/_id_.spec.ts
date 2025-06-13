@@ -11,7 +11,7 @@ const defaultProductStub = {
     summary: 'Short summary',
     description: 'Full **markdown** description',
     price: 19.99,
-    heatLevel: "Mild",
+    heatLevel: 1,
     image: [
       {
         fields: {

@@ -7,7 +7,7 @@ const mockProduct = {
   fields: {
     name: 'Super Hot Sauce',
     price: 999,
-    heatLevel: 'Hot',
+    heatLevel: 3,
     summary: 'Extremely spicy!',
     image: [
       {

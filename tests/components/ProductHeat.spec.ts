@@ -4,9 +4,9 @@ import ProductHeat from '@/components/ProductHeat.vue'
 
 describe('ProductHeat', () => {
   it.each([
-    ['Mild', '🔥'],
-    ['Medium', '🔥🔥'],
-    ['Hot', '🔥🔥🔥'],
+    [1, '🔥'],
+    [2, '🔥🔥'],
+    [3, '🔥🔥🔥'],
   ])('renders correct heat emoji for heatLevel=%s', (level, expected) => {
     const wrapper = mount(ProductHeat, {
       props: { heatLevel: level },
@@ -21,7 +21,7 @@ describe('ProductHeat', () => {
 
   it('renders empty string for unsupported heatLevel', () => {
     const wrapper = mount(ProductHeat, {
-      props: { heatLevel: 'ExtraHot' },
+      props: { heatLevel: 4 },
     })
     expect(wrapper.text()).toBe('')
   })

@@ -1,11 +1,11 @@
 <script setup>
 defineProps({
-  heatLevel: String,
+  heatLevel: Number,
 });
 const heatMap = {
-  Hot: "🔥🔥🔥",
-  Medium: "🔥🔥",
-  Mild: "🔥",
+  3: "🔥🔥🔥",
+  2: "🔥🔥",
+  1: "🔥",
 };
 </script>
 <template>

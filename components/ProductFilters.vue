@@ -1,6 +1,15 @@
 <script setup>
+import { debouncedWatch } from '@vueuse/core';
 const productStore = useProductStore();
 const filters = computed(() => productStore.filters);
+
+debouncedWatch(filters, () => {
+  useRouter().push({ query: filters.value });
+  productStore.fetchProducts();
+}, {
+  deep: true,
+  debounce: 500,
+})
 </script>
 <template>
   <div class="filters-wrapper flex gap-2 items-center">
@@ -40,8 +49,8 @@ const filters = computed(() => productStore.filters);
         id="orderBy"
       >
         <option value="">None</option>
-        <option value="-fields.heatLevel">Heat (Mild First)</option>
-        <option value="fields.heatLevel">Heat (Hot First)</option>
+        <option value="fields.heatLevel">Heat (Mild First)</option>
+        <option value="-fields.heatLevel">Heat (Hot First)</option>
         <option value="fields.price">Price (Low to High)</option>
         <option value="-fields.price">Price (High to Low)</option>
       </select>
