@@ -1,13 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import TheNavbar from '@/components/TheNavbar.vue'
-
-vi.mock('@/components/CartIcon.vue', () => ({
-  default: {
-    name: 'CartIcon',
-    template: '<div class="mock-cart-icon" />',
-  },
-}))
+import { useCartStore } from '@/stores/CartStore'
 
 // Stały mock siteName
 vi.mock('@/composables/AppConfig', () => ({
@@ -73,5 +67,21 @@ describe('TheNavbar.vue', () => {
     const wrapper = factoryMount()
     expect(wrapper.text()).toContain('0 Items')
     expect(wrapper.text()).toContain('View cart')
+  })
+
+  it('displays correct number of items in cart', () => {
+    const cart = useCartStore()
+    cart.items = [
+      { item: { fields: { price: 699 } }, amount: 1 }, 
+      { item: { fields: { price: 1199 } }, amount: 2 }
+    ]
+    const wrapper = factoryMount()
+
+    expect(wrapper.find('.badge').text()).toBe('3')
+
+    const dropdownContent = wrapper.find('.dropdown-content')
+
+    expect(dropdownContent.text()).toContain('3 Items')
+    expect(dropdownContent.text()).toContain('Subtotal: $30.97')
   })
 })

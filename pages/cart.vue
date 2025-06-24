@@ -2,8 +2,33 @@
 const selected = ref([]);
 const checkAll = ref();
 
+const cartStore = useCartStore();
+
+function toggleAll(event) {
+  const isChecked = event.target.checked;
+  const allIds = cartStore.items.map(({ item }) => item.sys.id);
+  selected.value = isChecked ? allIds : [];
+}
+
+function onItemCheckboxChange() {
+  if (!checkAll.value) return;
+
+  const allIds = cartStore.items.map(({ item }) => item.sys.id);
+  const areAllSelected = allIds.length > 0 && allIds.every(id => selected.value.includes(id));
+
+  checkAll.value.checked = areAllSelected;
+}
+
 async function handleCheckout() {
   console.log("checking out");
+}
+
+function removeSelectedItems() {
+  for (const id of selected.value) {
+    cartStore.removeFromCart(id);
+  }
+
+  selected.value = [];
 }
 </script>
 <template>
@@ -12,10 +37,10 @@ async function handleCheckout() {
     <div class="md:flex w-full">
       <div class="md:w-3/4">
         <!-- Use this markup to display an empty cart -->
-        <!-- <div  class="italic text-center pt-10">
+        <div v-if="!cartStore.items.length" class="italic text-center pt-10">
           Cart is empty
-        </div> -->
-        <div class="overflow-x-auto">
+        </div>
+        <div v-else class="overflow-x-auto">
           <div class="table w-full">
             <table class="w-full">
               <!-- head -->
@@ -23,7 +48,7 @@ async function handleCheckout() {
                 <tr>
                   <th>
                     <label>
-                      <input type="checkbox" class="checkbox" ref="checkAll" />
+                      <input type="checkbox" class="checkbox" ref="checkAll" @change="toggleAll" />
                     </label>
                   </th>
                   <th></th>
@@ -34,15 +59,15 @@ async function handleCheckout() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr v-for="({ item, amount }, i) in cartStore.items" :key="item.sys.id">
                   <th>
                     <label>
                       <input
                         v-model="selected"
                         type="checkbox"
                         class="checkbox"
-                        @change="checkAll.checked = false"
-                        value="5ijmFfTSEqj0G8h73g3CrI"
+                        @change="onItemCheckboxChange"
+                        :value="item.sys.id"
                       />
                     </label>
                   </th>
@@ -51,8 +76,8 @@ async function handleCheckout() {
                       <div class="avatar">
                         <div class="mask mask-squircle w-12 h-12">
                           <img
-                            src="//images.ctfassets.net/v7fvzlkum53d/5vUkOQDUSZAKSwXByyeruQ/8d503e499b0a9649a0165b399efbaeca/61N0eH6L6LL._SX679_.jpeg"
-                            alt="Heartbeat Hot Sauce- Pineapple Habanero"
+                            :src="item.fields.image[0].fields.file.url"
+                            :alt="item.fields.image[0].fields.title"
                           />
                         </div>
                       </div>
@@ -60,26 +85,27 @@ async function handleCheckout() {
                   </td>
                   <td>
                     <div class="font-bold">
-                      Heartbeat Hot Sauce- Pineapple Habanero
+                      {{ item.fields.name }}
                     </div>
-                    <ProductHeat heat-level="Mild" />
+                    <ProductHeat :heat-level="item.fields.heatLevel" />
                   </td>
                   <td>
-                    <ProductPrice :price="1195" />
+                    <ProductPrice :price="item.fields.price" />
                   </td>
 
                   <td>
                     <input
                       class="input input-bordered w-20"
                       type="number"
-                      value="1"
+                      min="0"
+                      v-model="cartStore.items[i].amount"
                     />
                   </td>
                   <th>
                     <NuxtLink
                       :to="{
                         name: 'products-id',
-                        params: { id: '5ijmFfTSEqj0G8h73g3CrI' },
+                        params: { id: item.sys.id },
                       }"
                     >
                       <button class="btn btn-ghost btn-xs">details</button>
@@ -88,7 +114,7 @@ async function handleCheckout() {
                 </tr>
               </tbody>
             </table>
-            <button v-if="selected.length" class="text-sm text-red-500">
+            <button v-if="selected.length" class="text-sm text-red-500" @click="removeSelectedItems">
               Remove Selected
             </button>
           </div>
@@ -99,9 +125,9 @@ async function handleCheckout() {
         <div class="card bg-slate-50">
           <div class="card-body">
             <ul>
-              <li><strong>Subtotal</strong>: $11.95</li>
-              <li><strong>Estimated Taxes </strong>: $1.19</li>
-              <li><strong>Total</strong>: $13.14</li>
+              <li><strong>Subtotal</strong>: <ProductPrice :price="cartStore.subTotal" /></li>
+              <li><strong>Estimated Taxes </strong>: <ProductPrice :price="cartStore.taxTotal" /></li>
+              <li><strong>Total</strong>: <ProductPrice :price="cartStore.total" /></li>
             </ul>
             <div class="card-actions justify-end w-full">
               <button class="btn btn-primary w-full" @click="handleCheckout">

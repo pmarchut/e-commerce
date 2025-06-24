@@ -3,6 +3,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ProductPage from '~/pages/products/[id].vue'
 import { useProductStore } from '~/stores/ProductStore'
 import { useAlertsStore } from '~/stores/AlertsStore'
+import { useCartStore } from '~/stores/CartStore'
 
 const defaultProductStub = {
   sys: { id: '123' },
@@ -25,9 +26,10 @@ const defaultProductStub = {
   },
 }
 
-async function factoryMount(overrides: { product?: any, alertSuccess?: Mock } = {}) {
+async function factoryMount(overrides: { product?: any, alertSuccess?: Mock, addToCart?: Mock } = {}) {
   const product = overrides.product || defaultProductStub
   const alertSuccess = overrides.alertSuccess || vi.fn()
+  const addToCart = overrides.addToCart || vi.fn()
 
   const productStore = useProductStore()
   productStore.fetchProduct = vi.fn().mockImplementation(async () => {
@@ -36,6 +38,9 @@ async function factoryMount(overrides: { product?: any, alertSuccess?: Mock } = 
 
   const alertsStore = useAlertsStore()
   alertsStore.success = alertSuccess
+
+  const cartStore = useCartStore()
+  cartStore.addToCart = addToCart
 
   const wrapper = await mountSuspended(ProductPage, {
     global: {
@@ -80,13 +85,16 @@ describe('ProductPage.vue', () => {
     }
 
     const alertSuccess = vi.fn()
+    const addToCart = vi.fn()
     const { wrapper } = await factoryMount({
       product: customProduct,
       alertSuccess,
+      addToCart
     })
 
     await wrapper.find('button.btn-primary').trigger('click')
 
     expect(alertSuccess).toHaveBeenCalledWith('Alert Test Product added to cart')
+    expect(addToCart).toHaveBeenCalledWith(customProduct)
   })
 })
