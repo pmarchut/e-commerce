@@ -1,6 +1,6 @@
 <script setup>
 const { auth } = useSupabaseAuth();
-await auth.logout();
+auth.logout();
 onMounted(() => {
   window.location = "/login";
 });

@@ -1,40 +1,61 @@
-export const useCartStore = defineStore("CartStore", {
-  state: () => ({
-    items: [] as any[],
-  }),
+import { watchDebounced } from "@vueuse/core"
 
-  getters: {
-    totalCount: (state) => 
-      state.items.reduce((total, item) => total + item.amount, 0),
+export const useCartStore = defineStore('CartStore', () => {
+  const items = ref<any[]>([])
+  const supabase = useSupabaseAuth()
 
-    subTotal: (state) =>
-      state.items.reduce((total, item) => total + (item.item.fields.price * item.amount), 0),
+  const totalCount = computed(() =>
+    items.value.reduce((total, item) => total + item.amount, 0)
+  )
 
-    taxTotal() : number {
-      return this.subTotal * 0.1;
-    },
+  const subTotal = computed(() =>
+    items.value.reduce((total, item) => total + item.item.fields.price * item.amount, 0)
+  )
 
-    total() : number {
-      return this.subTotal + this.taxTotal;
-    },
-  },
+  const taxTotal = computed(() => subTotal.value * 0.1)
+  const total = computed(() => subTotal.value + taxTotal.value)
 
-  actions: {
-    addToCart(item: any) {
-      const existingItem = this.items.find((i) => i.item.sys.id === item.sys.id);
-      if (existingItem) {
-        existingItem.amount++;
-      } else {
-        this.items.push({ item, amount: 1 });
-      }
-    },
-
-    removeFromCart(itemId: string) {
-      const index = this.items.findIndex((i) => i.item.sys.id === itemId);
-      if (index !== -1) {
-        this.items.splice(index, 1);
-      }
+  function addToCart(item: any) {
+    const existingItem = items.value.find((i) => i.item.sys.id === item.sys.id)
+    if (existingItem) {
+      existingItem.amount++
+    } else {
+      items.value.push({ item, amount: 1 })
     }
+  }
+
+  function removeFromCart(itemId: string) {
+    const index = items.value.findIndex((i) => i.item.sys.id === itemId)
+    if (index !== -1) {
+      items.value.splice(index, 1)
+    }
+  }
+
+  function replaceCart(newItems: any[]) {
+    items.value = newItems || []
+  }
+
+  watchDebounced(
+    items, async () => {
+      if (!supabase.authReady) return
+
+      await supabase.user.updateCart(items.value)
+    },
+    { 
+      deep: true, 
+      debounce: 500 
+    },
+  );
+
+  return {
+    items,
+    totalCount,
+    subTotal,
+    taxTotal,
+    total,
+    addToCart,
+    removeFromCart,
+    replaceCart,
   }
 })
 
