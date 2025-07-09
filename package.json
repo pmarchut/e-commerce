@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview"
   },
@@ -21,9 +21,9 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@formkit/nuxt": "^1.0.0-beta.10",
-    "@formkit/themes": "^1.0.0-beta.10",
-    "@formkit/vue": "^1.0.0-beta.10",
+    "@formkit/nuxt": "^1.0.0",
+    "@formkit/themes": "^1.0.0",
+    "@formkit/vue": "^1.0.0",
     "@pinia/nuxt": "^0.11.0",
     "@vueuse/core": "^9.1.0",
     "contentful": "^9.1.33",

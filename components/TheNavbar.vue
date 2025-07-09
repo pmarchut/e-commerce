@@ -7,16 +7,19 @@ const authReady = computed(() => supabase.authReady);
 const cartStore = useCartStore();
 </script>
 <template>
-  <div class="navbar bg-base-100 shadow-md">
-    <div class="flex-1">
-      <NuxtLink class="btn btn-ghost normal-case text-xl" to="/">{{
-        siteName
-      }}</NuxtLink>
+  <div class="navbar bg-base-100 shadow-md flex justify-between items-center px-4 py-2" style="min-width: max-content;">
+    <!-- Left: site name -->
+    <div class="flex-shrink-0">
+      <NuxtLink class="btn btn-ghost normal-case text-xl" to="/">
+        {{ siteName }}
+      </NuxtLink>
     </div>
-    <!-- Right Side -->
+
+    <!-- Right: cart + auth -->
     <ClientOnly>
-      <template #default> 
-        <div class="flex-none">
+      <template #default>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <!-- Cart -->
           <div class="dropdown dropdown-end">
             <CartIcon :loading="false" :count="cartStore.totalCount" />
             <div
@@ -24,8 +27,13 @@ const cartStore = useCartStore();
               class="mt-3 card card-compact dropdown-content w-52 bg-base-100 shadow"
             >
               <div class="card-body">
-                <span class="font-bold text-lg">{{ cartStore.totalCount }} Items</span>
-                <span class="text-info">Subtotal: <ProductPrice :price="cartStore.subTotal" /></span>
+                <span class="font-bold text-lg">
+                  {{ cartStore.totalCount }} Items
+                </span>
+                <span class="text-info">
+                  Subtotal:
+                  <ProductPrice :price="cartStore.subTotal" />
+                </span>
                 <div class="card-actions">
                   <NuxtLink :to="{ name: 'cart' }">
                     <button class="btn btn-primary btn-block">View cart</button>
@@ -34,23 +42,23 @@ const cartStore = useCartStore();
               </div>
             </div>
           </div>
-          
+
+          <!-- Auth buttons / user -->
           <div v-if="authReady">
-            <!--Buttons for UN-logged In Users-->
-            <div v-if="!loggedInUser">
+            <div v-if="!loggedInUser" class="flex gap-2">
               <NuxtLink
                 to="/login"
-                class="btn btn-ghost border-2 border-gray-100 btn-sm ml-5"
-                >Login</NuxtLink
+                class="btn btn-ghost border-2 border-gray-100 btn-sm"
               >
-              <NuxtLink to="/register" class="btn btn-primary btn-sm ml-2"
-                >Register</NuxtLink
-              >
+                Login
+              </NuxtLink>
+              <NuxtLink to="/register" class="btn btn-primary btn-sm">
+                Register
+              </NuxtLink>
             </div>
 
-            <!--UI for logged In Users-->
             <div v-else class="dropdown dropdown-end">
-              <label tabindex="0" class="btn btn-sm ml-5">
+              <label tabindex="0" class="btn btn-sm">
                 <button>{{ loggedInUser.email }}</button>
               </label>
               <ul

@@ -21,32 +21,31 @@ export const useSupabaseAuth = defineStore('supabaseAuth', () => {
   async function initUser(supabaseUser) {
     if (!supabaseUser) {
       loggedInUser.value = null
-      return
-    }
+    } else {
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('user_id', supabaseUser.id)
+        .single()
 
-    const { data: profile, error } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('user_id', supabaseUser.id)
-      .single()
+      if (error) {
+        if (error.code === 'PGRST116') router.push('/logout')
+        throw error
+      }
 
-    if (error) {
-      if (error.code === 'PGRST116') router.push('/logout')
-      throw error
-    }
+      loggedInUser.value = {
+        ...supabaseUser,
+        ...profile,
+      }
 
-    loggedInUser.value = {
-      ...supabaseUser,
-      ...profile,
-    }
-
-    // 💡 Ładuj koszyk równolegle
-    if (profile.cart_id) {
-      try {
-        const cartItems = await user.getCart()
-        await cartStore.replaceCart(cartItems)
-      } catch (err) {
-        console.error('Nie udało się załadować koszyka:', err)
+      // 💡 Ładuj koszyk równolegle
+      if (profile.cart_id) {
+        try {
+          const cartItems = await user.getCart()
+          await cartStore.replaceCart(cartItems)
+        } catch (err) {
+          console.error('Nie udało się załadować koszyka:', err)
+        }
       }
     }
 

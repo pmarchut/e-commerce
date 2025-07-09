@@ -1,6 +1,8 @@
 <script setup>
 const { initAuthWatcher } = useSupabaseAuth()
-initAuthWatcher()
+onMounted(() => {
+  initAuthWatcher()
+})
 </script>
 
 <template>
