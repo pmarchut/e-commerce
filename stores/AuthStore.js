@@ -38,13 +38,24 @@ export const useSupabaseAuth = defineStore('supabaseAuth', () => {
         ...profile,
       }
 
-      // 💡 Ładuj koszyk równolegle
+      const isSuccessPage = router.currentRoute.value.fullPath.includes('/checkout/success')
+
       if (profile.cart_id) {
-        try {
-          const cartItems = await user.getCart()
-          await cartStore.replaceCart(cartItems)
-        } catch (err) {
-          console.error('Nie udało się załadować koszyka:', err)
+        if (isSuccessPage && !authReady.value) {
+          // ✅ Pusty koszyk, jesteśmy po zakupie → wyczyść też w Supabase
+          try {
+            await user.updateCart([])
+          } catch (err) {
+            console.error('Nie udało się wyczyścić koszyka w Supabase:', err)
+          }
+        } else {
+          // 🛑 Normalny przypadek: pobierz koszyk z Supabase
+          try {
+            const cartItems = await user.getCart()
+            await cartStore.replaceCart(cartItems)
+          } catch (err) {
+            console.error('Nie udało się załadować koszyka:', err)
+          }
         }
       }
     }

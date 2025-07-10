@@ -20,7 +20,18 @@ function onItemCheckboxChange() {
 }
 
 async function handleCheckout() {
-  console.log("checking out");
+  const res = await $fetch('/api/cart', {
+    method: "POST",
+    body: {
+      products: cartStore.items.map((item) => ({
+        id: item.item.fields.stripeProductId,
+        quantity: item.amount,
+      })),
+      origin: window.location.origin,
+    }
+  });
+  
+  window.location = res.url;
 }
 
 function removeSelectedItems() {
