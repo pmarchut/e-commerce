@@ -34,9 +34,9 @@ debouncedWatch(filters, () => {
         v-model="filters[`fields.heatLevel`]"
       >
         <option value="">All</option>
-        <option value="Mild">Mild</option>
-        <option value="Medium">Medium</option>
-        <option value="Hot">Hot</option>
+        <option value="1">Mild</option>
+        <option value="2">Medium</option>
+        <option value="3">Hot</option>
       </select>
     </div>
     <div class="form-control w-full max-w-xs">

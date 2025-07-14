@@ -1,11 +1,6 @@
-# Vue.js Forge Episode 2 Codebase
+# e-commerce
 
-![Vue.js Forge Episode 2](https://vuejsforge.com/images/logo-vuejs-forge.svg)
-
-This repo includes:
-
-- The boilerplate code for the event (branch: main)
-- Branches for both the starting point and the ending point for all exercises
+Site: https://taupe-puppy-ac52e9.netlify.app
 
 ## Services
 
@@ -14,7 +9,6 @@ During the event we'll use several 3rd party SaaS platforms to provide app funca
 - Deskree (replaced with Supabase, because Deskree closed Backend as a Service)
 - Contentful CMS
 - Stripe
-- and Big Commerce
 
 Please be sure to follow the steps in the event preparation doc to make sure these services are setup correctly.
 

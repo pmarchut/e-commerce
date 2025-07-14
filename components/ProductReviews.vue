@@ -8,6 +8,9 @@ const props = defineProps<{
 const { reviews } = useSupabaseAuth();
 const alerts = useAlertsStore();
 
+const supabase = useSupabaseAuth();
+const loggedInUser = computed(() => supabase.loggedInUser);
+
 const loadingForm = ref(false);
 const showForm = ref(false);
 const showReviews = ref(true);
@@ -103,13 +106,15 @@ const getRatingPercentage = (star: number): number => {
 
       <!-- 🔘 Przyciski akcji -->
       <div class="flex flex-wrap my-5">
-        <button
-          class="underline"
-          @click="showForm = !showForm"
-        >
-          {{ showForm ? 'Hide Review Form' : 'Write a Review' }}
-        </button>
-        <div class="divider divider-horizontal mx-1"></div>
+        <template v-if="loggedInUser">
+          <button
+            class="underline"
+            @click="showForm = !showForm"
+          >
+            {{ showForm ? 'Hide Review Form' : 'Write a Review' }}
+          </button>
+          <div class="divider divider-horizontal mx-1"></div>
+        </template>
         <button
           class="underline"
           @click="showReviews = !showReviews"
